@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The plugin.dtd file is located in the OXYGEN_INSTALL_DIR/plugins directory -->
+<!DOCTYPE plugin SYSTEM "../plugin.dtd">
+
+<plugin
+    class="ro.sync.exml.plugin.Plugin"
+
+    id="webapp-argon-rest-plugin"
+    name="Argon RESTXQ Connector"
+    description="oXygen XML Web Author connector for argon-restxq (BaseX REST API)"
+    version="0.1.1"
+    vendor="axxepta GmbH">
+
+  <runtime>
+    <librariesFolder name="lib" />
+    <librariesFolder name="target/lib" />
+    <library name="target/classes" />
+  </runtime>
+
+  <!-- Login servlet -->
+  <extension type="WebappServlet" class="LoginCallbackServlet"/>
+  
+  <extension type="URLHandler" 
+    class="ArgonURLHandlerPluginExtension"/>
+    
+  <extension type="WebappServlet" role="config"
+    class="ArgonConfigExtension"/>
+  
+  <!-- You can access static files at XML_WEB_AUTHOR/plugin-resources/argon-resources/RESOURCE_FILE -->
+  <extension type="WebappStaticResourcesFolder" path="web/resources/" href="argon-resources"/>
+  
+</plugin>

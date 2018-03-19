@@ -1,0 +1,55 @@
+group 'de.axxepta'
+version '0.1.1'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'http://oxygenxml.com/maven'
+    }
+}
+
+configurations {
+    releaseJars
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    compile 'com.oxygenxml:oxygen-webapp:19.1.0.0'
+    compile 'javax.servlet:javax.servlet-api:3.0.1'
+
+    releaseJars 'javax.servlet:javax.servlet-api:3.0.1'
+}
+
+task copyToLib( type: Copy ) {
+    into "$buildDir/libs"
+    from configurations.releaseJars
+}
+
+jar {
+    dependsOn copyToLib
+}
+
+task copyJars( type: Copy ) {
+    dependsOn jar
+    into "$buildDir/distributions/tmp/webapp-" + project.name + "/lib"
+    from "$buildDir/libs"
+}
+
+task copyDist( type: Copy ) {
+    into "$buildDir/distributions/tmp/webapp-" + project.name
+    from "src/dist"
+}
+
+task makePlugin(type: Jar) {
+    baseName = 'webapp-' + project.name + '-all'
+    destinationDir = file("$buildDir/distributions")
+    dependsOn copyJars, copyDist
+    from "$buildDir/distributions/tmp"
+}
