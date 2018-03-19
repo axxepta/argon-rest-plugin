@@ -23,7 +23,7 @@ component as REST API.
 An additional tree contained in a special view component uses the oXygen JS API to interact
 between a database tree and the editor component of the oXygen XML Web Author.
 
-To make sure that the [fancytree](fancytree) can lazy load by Ajax request from BaseX with 
+To make sure that the [fancytree](https://github.com/mar10/fancytree) can lazy load by Ajax request from BaseX with 
 possibly different host/port (Cross-origin resource sharing),
 the Jetty config of the BaseX component has to be adjusted and BaseX version >= 8.6
 should be used. \[1\]
