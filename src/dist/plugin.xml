@@ -18,13 +18,13 @@
   </runtime>
 
   <!-- Login servlet -->
-  <extension type="WebappServlet" class="LoginCallbackServlet"/>
+  <extension type="WebappServlet" class="de.axxepta.argon.webapp.LoginCallbackServlet"/>
   
   <extension type="URLHandler" 
-    class="ArgonURLHandlerPluginExtension"/>
+    class="de.axxepta.argon.webapp.ArgonURLHandlerPluginExtension"/>
     
   <extension type="WebappServlet" role="config"
-    class="ArgonConfigExtension"/>
+    class="de.axxepta.argon.webapp.ArgonConfigExtension"/>
   
   <!-- You can access static files at XML_WEB_AUTHOR/plugin-resources/argon-resources/RESOURCE_FILE -->
   <extension type="WebappStaticResourcesFolder" path="web/resources/" href="argon-resources"/>
