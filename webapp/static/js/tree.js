@@ -12,7 +12,7 @@ $(function(){  // on page load
         var node = data.node;
         if (!node.folder) {
             var fileLink = encodeURIComponent("argon://" + node.key);
-            document.getElementById("oxygenFrame").src="http://localhost:8282/oxygen-xml-web-author/app/oxygen.html?url=" + fileLink;
+            document.getElementById("oxygenFrame").src="http://" + location.hostname + ":8282/oxygen-xml-web-author/app/oxygen.html?url=" + fileLink;
         }
     },
     extensions: ["dnd5"],

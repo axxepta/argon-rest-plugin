@@ -1,6 +1,6 @@
 module namespace _= "argon/tree";
 
-
+import module namespace config = "argon/config" at "config.xqm";
 
 declare
   %rest:GET
@@ -11,7 +11,7 @@ declare
 function _:argon($OXY-URL as xs:string) as item() {
 <html>
     <head>
-        <script src="http://localhost:8282/oxygen-xml-web-author/app/v19.1.0-bower_components/jquery/jquery.min.js"></script>
+        <script src="http://{$config:HOST}:8282/oxygen-xml-web-author/app/v19.1.0-bower_components/jquery/jquery.min.js"></script>
         <link href="/static/js/fancytree/skin-win8/ui.fancytree.min.css" rel="stylesheet"/>
         <link href="/static/AdminLTE.min.css" rel="stylesheet"/>
         <script src="/static/js/fancytree/jquery.fancytree-all-deps.min.js"></script>
