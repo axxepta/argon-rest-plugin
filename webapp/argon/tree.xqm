@@ -18,7 +18,7 @@ function _:argon($OXY-URL as xs:string) as item() {
         <script src="/static/js/tree.js"></script>
     </head>
     <body>
-        <iframe src="http://localhost:8282/oxygen-xml-web-author/app/oxygen.html{if (empty($OXY-URL)) then '' else concat('?url=', $OXY-URL)}"
+        <iframe src="http://{$config:HOST}:8282/oxygen-xml-web-author/app/oxygen.html{if (empty($OXY-URL)) then '' else concat('?url=', $OXY-URL)}"
             width="85%" onload="this.height=window.innerHeight;" align="right" id="oxygenFrame" name="oxygen" title="oXygen Web Author"></iframe>
         <div>
             <div>
