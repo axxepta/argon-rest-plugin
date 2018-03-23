@@ -29,10 +29,11 @@ public class ArgonURLStreamHandler extends URLStreamHandlerWithContext {
   @Override
   protected String getContextId(UserContext context) {
     String contextId = super.getContextId(context);
-    
+
     StringBuilder cookies = new StringBuilder();
     for (Map.Entry<String, String> cookie: context.getCookies().entrySet()) {
       cookies.append(cookie.getKey()).append('=').append(cookie.getValue()).append("; ");
+      logger.warn("COOKIES :" + cookie.getKey()+ "=" + cookie.getValue());
     }
     Map<String, String> headersMap = Collections.singletonMap("Cookie", cookies.toString()); 
     ArgonURLConnection.credentialsMap.put(contextId, headersMap);
@@ -62,7 +63,6 @@ public class ArgonURLStreamHandler extends URLStreamHandlerWithContext {
     String serverUrl = getServerUrl();
     if(serverUrl != null && !serverUrl.isEmpty()) {
       String restUrl = serverUrl + "files?url=" + encodedDocumentURL;
-      logger.error("ArgonURLStreamHandler COMPUTED REST URL: " + restUrl);
       return new URL(restUrl);
     }
     PluginResourceBundle rb = ((WebappPluginWorkspace)PluginWorkspaceProvider.getPluginWorkspace()).getResourceBundle();

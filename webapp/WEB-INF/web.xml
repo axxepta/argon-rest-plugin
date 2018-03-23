@@ -47,7 +47,7 @@
     <param-value>false</param-value>
   </context-param>
   -->
-
+  
   <!-- Global session and servlet listener -->
   <listener>
     <listener-class>org.basex.http.SessionListener</listener-class>
@@ -90,10 +90,10 @@
   <servlet>
     <servlet-name>RESTXQ</servlet-name>
     <servlet-class>org.basex.http.restxq.RestXqServlet</servlet-class>
-    <init-param>
+  <!--  <init-param>
       <param-name>org.basex.user</param-name>
       <param-value>admin</param-value>
-    </init-param>
+    </init-param> -->
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -127,6 +127,10 @@
     <init-param>
       <param-name>useFileMappedBuffer</param-name>
       <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>aliases</param-name>
+      <param-value>true</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
