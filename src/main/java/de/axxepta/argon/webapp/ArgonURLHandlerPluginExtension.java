@@ -10,6 +10,7 @@ import ro.sync.exml.workspace.api.PluginWorkspaceProvider;
  * URL Stream Handler plugin extension.
  * 
  * @author mihai_coanda
+ * modified from com.oxygenxml.rest.plugin.RestURLHandlerPluginExtension by MarkusWb
  */
 public class ArgonURLHandlerPluginExtension implements URLStreamHandlerPluginExtension {
 

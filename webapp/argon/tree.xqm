@@ -13,7 +13,7 @@ function _:argon($OXY-URL as xs:string) as item() {
     <head>
         <script src="http://{$config:HOST}:8282/oxygen-xml-web-author/app/{$config:OXY-VER}-bower_components/jquery/jquery.min.js"></script>
         <link href="/static/js/fancytree/skin-win8/ui.fancytree.min.css" rel="stylesheet"/>
-        <link href="/static/AdminLTE.min.css" rel="stylesheet"/>
+        <link href="/static/tree.css" rel="stylesheet"/>
         <script src="/static/js/fancytree/jquery.fancytree-all-deps.min.js"></script>
         <script src="/static/js/tree.js"></script>
     </head>

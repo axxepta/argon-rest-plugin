@@ -135,6 +135,18 @@
       initialUrl: 'argon://Databases/',	//latestUrl,
       root: latestRootUrl
     });
+	
+	// Listen for messages from the login-finished iframe
+    window.addEventListener('message', function(msg) {
+        if(msg.data == 'login-finished') {			
+          this.loginDialog && this.loginDialog.hide();
+
+          var iframe = document.getElementById('argon-login-iframe');
+          iframe.parentNode.removeChild(iframe);
+
+          this.latestCallback && this.latestCallback();
+        }
+      }.bind(this));
   };
   goog.inherits(ArgonFileBrowser, sync.api.FileBrowsingDialog);
 
@@ -312,11 +324,12 @@
     this.latestCallback = callback;
     this.loginDialog.getElement().innerHTML =
       '<iframe id="argon-login-iframe" style="width:100%; height:100%;border:none;" src="' +
-      sync.options.PluginsOptions.getClientOption('argonServerUrl') + 'argon-login"></iframe>'
+      sync.options.PluginsOptions.getClientOption('argonServerUrl') + 'login"></iframe>'
 
     this.loginDialog.show();
     this.loginDialog.onSelect(function(e) {
       this.dialog.hide();
+	  //callback();
     }.bind(this));
   };
 

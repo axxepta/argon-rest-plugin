@@ -50,6 +50,7 @@ import ro.sync.util.URLUtil;
  * {@link UserActionRequiredException}.
  * 
  * @author mihai_coanda
+ * modified from com.oxygenxml.rest.plugin.RestURLConnection by MarkusWb
  */
 public class ArgonURLConnection extends FilterURLConnection implements CacheableUrlConnection {
 

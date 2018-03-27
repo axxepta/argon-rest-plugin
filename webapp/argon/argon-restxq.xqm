@@ -1,5 +1,8 @@
 module namespace _= "argon/argon";
 
+import module namespace Session = 'http://basex.org/modules/session';
+import module namespace config = "argon/config" at "config.xqm";
+
 declare function _:path-strip($path as xs:string) as xs:string {
     if (contains($path, 'Databases'))
         then substring-after($path, 'Databases/')
@@ -11,6 +14,7 @@ declare function _:path-strip($path as xs:string) as xs:string {
 
 declare
   %rest:GET
+  %perm:allow("create")
   %rest:path("/files")
   %rest:query-param("url", "{$DBPATH}")
 function _:get-file($DBPATH as xs:string) {
@@ -47,6 +51,7 @@ function _:get-file($DBPATH as xs:string) {
 
 declare
   %rest:PUT("{$body}")
+  %perm:allow("create")
   %rest:path("/files")
   %rest:query-param("url", "{$DBPATH}")
   %updating
@@ -56,6 +61,7 @@ function _:put-file($DBPATH as xs:string, $body) {
 
 declare
   %rest:POST("{$body}")
+  %perm:allow("create")
   %rest:path("/files")
   %rest:query-param("url", "{$DBPATH}")
   %updating
@@ -188,9 +194,9 @@ function _:save($PATH as xs:string, $RESOURCE as xs:string) {
     )
 };
 
-
 declare
   %rest:GET
+  %perm:allow("create")
   %rest:path("/folders")
   %rest:query-param("url", "{$DBPATH}")
   %rest:query-param("tree", "{$TREE}")
@@ -243,4 +249,73 @@ function _:list($DBPATH as xs:string, $TREE as xs:boolean?) {
         }</json>
         return $json
     )
+};
+
+declare %perm:check('/files', '{$perm}') function _:check-files($perm) {
+    _:check($perm)
+};
+
+declare %perm:check('/folders', '{$perm}') function _:check-folder($perm) {
+    _:check($perm)
+};
+
+declare function _:error-response($NO) {
+  <rest:response>
+    <http:response status="{$NO}" message="User not logged in.">
+      <http:header name="Content-Language" value="en"/>
+      <http:header name="Content-Type" value="text/html; charset=utf-8"/>
+    </http:response>
+  </rest:response>
+};
+
+declare function _:check($perm) {
+  let $user := Session:get('id')
+  where empty($user) or not(user:list-details($user)/@permission = $perm?allow)
+  return _:error-response('401')
+};
+
+declare %perm:check('/check-login', '{$perm}') function _:tree-check($perm) {
+  let $user := Session:get('id')
+  where empty($user) or not(user:list-details($user)/@permission = $perm?allow)
+  return _:error-response('403')
+};
+
+declare
+  %rest:path("/check-login")
+  %perm:allow("create")
+function _:check-login() {
+  ()
+};
+
+declare
+  %rest:path("/login-check")
+  %rest:query-param("name", "{$name}")
+  %rest:query-param("pass", "{$pass}")
+  %rest:query-param("path", "{$path}", '')
+  %output:method("json")
+function _:login-check($name, $pass, $path) {
+  try {
+    user:check($name, $pass),
+    Session:set('id', $name),
+    if ($path != '')
+        then web:redirect($path)
+        else web:redirect("/static/closeLoginFrame.html")
+  } catch user:* {
+    web:redirect("/")
+  }
+};
+
+declare
+  %rest:path("/login")
+  %rest:query-param("path", "{$path}", '')
+  %output:method("html")
+function _:login($path) {
+  <html>
+    Please log in:
+    <form action="/login-check{if ($path != '') then ('?path=' || $path) else ()}" method="post">
+      <input name="name"/>
+      <input type="password" name="pass"/>
+      <input type="submit"/>
+    </form>
+  </html>
 };

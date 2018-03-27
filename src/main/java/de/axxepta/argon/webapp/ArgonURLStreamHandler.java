@@ -21,6 +21,7 @@ import ro.sync.util.URLUtil;
  * URL stream handler for a rest server.
  * 
  * @author mihai_coanda
+ * modified from com.oxygenxml.rest.plugin.RestURLStreamHandler by MarkusWb
  */
 public class ArgonURLStreamHandler extends URLStreamHandlerWithContext {
 
