@@ -8,7 +8,7 @@
     id="webapp-argon-rest-plugin"
     name="Argon RESTXQ Connector"
     description="oXygen XML Web Author connector for argon-restxq (BaseX REST API)"
-    version="0.1.1"
+    version="0.1.2"
     vendor="axxepta GmbH">
 
   <runtime>
@@ -17,15 +17,18 @@
     <library name="target/classes" />
   </runtime>
 
-  <!-- Login servlet -->
+  <!-- Login servlet
   <extension type="WebappServlet" class="de.axxepta.argon.webapp.LoginCallbackServlet"/>
-  
+  -->
   <extension type="URLHandler" 
     class="de.axxepta.argon.webapp.ArgonURLHandlerPluginExtension"/>
-    
+
+  <extension type="LockHandlerFactory"
+             class="de.axxepta.argon.webapp.ArgonLockHandlerFactory"/>
+
   <extension type="WebappServlet" role="config"
     class="de.axxepta.argon.webapp.ArgonConfigExtension"/>
-  
+
   <!-- You can access static files at XML_WEB_AUTHOR/plugin-resources/argon-resources/RESOURCE_FILE -->
   <extension type="WebappStaticResourcesFolder" path="web/resources/" href="argon-resources"/>
   

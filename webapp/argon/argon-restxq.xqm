@@ -14,7 +14,103 @@ declare function _:path-strip($path as xs:string) as xs:string {
 
 declare
   %rest:GET
-  %perm:allow("create")
+  %perm:allow("read")
+  %rest:path("/user")
+  %output:method("json")
+function _:user() {
+    let $user := Session:get("id")
+    return <json objects="json"><user>{$user}</user></json>
+};
+
+declare
+  %rest:GET
+  %perm:allow("read")
+  %rest:path("/locks")
+  %rest:query-param("path", "{$PATH}")
+  %output:method("json")
+function _:locked($PATH as xs:string) {
+    let $SOURCE := 'database'
+    
+    (:~ Lock database. :)
+    let $LOCK-DB := '~argon'
+    let $USER-FILE := '~usermanagement'
+    
+    let $user := Session:get("id")
+    let $lock-file := db:open($LOCK-DB, $USER-FILE)
+    let $locked := exists($lock-file) and exists($lock-file//locks/*[name() = $SOURCE][text() = $PATH]) and empty($lock-file//locks/*[name() = $SOURCE][text() = $PATH][@user = $user])
+    return <json objects="json" booleans="locked"><locked>{$locked}</locked><user>{$user}</user></json>
+};
+
+declare
+  %rest:GET
+  %rest:path("/lock")
+  %rest:query-param("path", "{$PATH}", '')
+  %updating
+function _:lock($PATH as xs:string) {
+    let $SOURCE := 'database'
+    
+    (:~ Lock database. :)
+    let $LOCK-DB := '~argon'
+    let $USER-FILE := '~usermanagement'
+    
+    let $user := Session:get("id")
+    let $lock-file := db:open($LOCK-DB, $USER-FILE)
+    let $my-lock := if(exists($lock-file)) then (
+        $lock-file//*[name() = $SOURCE][text() = $PATH]
+    ) else ()
+    
+    let $locks := (
+        if(exists($lock-file))
+        then $lock-file
+        else document { <usermanagement><locks/><groups><group name="admin"><user>admin</user></group></groups>
+        <users><name>admin</name></users></usermanagement> }
+    ) update (
+    insert node element { $SOURCE } { attribute user { $user },  $PATH } into .//locks )
+    
+    return if(exists($lock-file) and exists($my-lock) ) then (
+        ()
+    ) else if(exists($lock-file) ) then (
+        (db:replace($LOCK-DB, $USER-FILE, $locks),
+        update:output('LOCK ' || $PATH))
+    ) else (
+        (db:add($LOCK-DB, $locks, $USER-FILE),
+        update:output('LOCK ' || $PATH))
+    )
+};
+
+declare
+  %rest:GET
+  %rest:path("/unlock")
+  %rest:query-param("path", "{$PATH}")
+  %updating
+function _:unlock($PATH as xs:string) {
+    let $SOURCE := 'database'
+    
+    (:~ Lock database. :)
+    let $LOCK-DB := '~argon'
+    let $USER-FILE := '~usermanagement'
+    
+    let $user := Session:get("id")
+    let $exists := db:exists($LOCK-DB, $USER-FILE)
+    let $locks := (
+        if($exists)
+        then db:open($LOCK-DB, $USER-FILE)
+        else document { <usermanagement><locks/><groups><group name="admin"><user>admin</user></group></groups></usermanagement> }
+    ) update (
+        delete node *//locks/*[name() = $SOURCE][text() = $PATH][@user = $user]
+    )
+    return if($exists) then (
+        (db:replace($LOCK-DB, $USER-FILE, $locks),
+        update:output('UNLOCK ' || $PATH))
+    ) else (
+        (db:create($LOCK-DB, $locks, $USER-FILE),
+        update:output('UNLOCK ' || $PATH))
+    )
+};
+
+declare
+  %rest:GET
+  %perm:allow("read")
   %rest:path("/files")
   %rest:query-param("url", "{$DBPATH}")
 function _:get-file($DBPATH as xs:string) {
@@ -51,7 +147,7 @@ function _:get-file($DBPATH as xs:string) {
 
 declare
   %rest:PUT("{$body}")
-  %perm:allow("create")
+  %perm:allow("write")
   %rest:path("/files")
   %rest:query-param("url", "{$DBPATH}")
   %updating
@@ -61,7 +157,7 @@ function _:put-file($DBPATH as xs:string, $body) {
 
 declare
   %rest:POST("{$body}")
-  %perm:allow("create")
+  %perm:allow("write")
   %rest:path("/files")
   %rest:query-param("url", "{$DBPATH}")
   %updating
@@ -196,7 +292,7 @@ function _:save($PATH as xs:string, $RESOURCE as xs:string) {
 
 declare
   %rest:GET
-  %perm:allow("create")
+  %perm:allow("write")
   %rest:path("/folders")
   %rest:query-param("url", "{$DBPATH}")
   %rest:query-param("tree", "{$TREE}")
@@ -251,6 +347,14 @@ function _:list($DBPATH as xs:string, $TREE as xs:boolean?) {
     )
 };
 
+declare %perm:check('/locks', '{$perm}') function _:check-locks($perm) {
+    _:check($perm)
+};
+
+declare %perm:check('/user', '{$perm}') function _:check-users($perm) {
+    _:check($perm)
+};
+
 declare %perm:check('/files', '{$perm}') function _:check-files($perm) {
     _:check($perm)
 };
@@ -270,19 +374,27 @@ declare function _:error-response($NO) {
 
 declare function _:check($perm) {
   let $user := Session:get('id')
-  where empty($user) or not(user:list-details($user)/@permission = $perm?allow)
+  where empty($user) or not(_:permission-granted(user:list-details($user)/@permission, $perm?allow))
   return _:error-response('401')
 };
 
 declare %perm:check('/check-login', '{$perm}') function _:tree-check($perm) {
   let $user := Session:get('id')
-  where empty($user) or not(user:list-details($user)/@permission = $perm?allow)
+  where empty($user) or not(_:permission-granted(user:list-details($user)/@permission, $perm?allow)) (:not(user:list-details($user)/@permission = $perm?allow):)
   return _:error-response('403')
+};
+
+declare function _:permission-granted($userPermission as xs:string, $requiredPermission as xs:string) as xs:boolean {
+    switch ($requiredPermission) 
+        case "read" return true()
+        case "write" return if ($userPermission = 'read') then false() else true()
+        case "create" return if (($userPermission = 'read') or ($userPermission = 'write')) then false() else true()
+        default return if ($userPermission = 'admin') then true() else false()
 };
 
 declare
   %rest:path("/check-login")
-  %perm:allow("create")
+  %perm:allow("write")
 function _:check-login() {
   ()
 };
@@ -298,7 +410,7 @@ function _:login-check($name, $pass, $path) {
     user:check($name, $pass),
     Session:set('id', $name),
     if ($path != '')
-        then web:redirect($path)
+        then web:redirect($path || "?author=" || $name)
         else web:redirect("/static/closeLoginFrame.html")
   } catch user:* {
     web:redirect("/")

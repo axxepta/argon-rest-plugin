@@ -52,7 +52,10 @@
 
 	ArgonTreeAction.prototype.actionPerformed = function(callback) {
 		var editorURL = new URL(location.href).searchParams.get('url');
-		window.open('http://' + location.hostname +':8984/argon.html?url=' + encodeURIComponent(editorURL),'_top')
+		var author = new URL(location.href).searchParams.get('author');
+		window.open('http://' + location.hostname +':8984/argon.html?url=' + encodeURIComponent(editorURL)
+			+ (author ? "&author=" + author : "")
+			,'_top')
 	};
 	
     ArgonTreeAction.prototype.getLargeIcon = function () {

@@ -6,9 +6,10 @@ declare
   %rest:GET
   %rest:path("/argon.html")
   %rest:query-param("url", "{$OXY-URL}", '')
+  %rest:query-param("author", "{$AUTHOR}", '')
   %output:method("xhtml")
   %output:html-version("5.0")
-function _:argon($OXY-URL as xs:string) as item() {
+function _:argon($OXY-URL as xs:string, $AUTHOR as xs:string) as item() {
 <html>
     <head>
         <script src="http://{$config:HOST}:8282/oxygen-xml-web-author/app/{$config:OXY-VER}-bower_components/jquery/jquery.min.js"></script>
@@ -18,7 +19,11 @@ function _:argon($OXY-URL as xs:string) as item() {
         <script src="/static/js/tree.js"></script>
     </head>
     <body>
-        <iframe src="http://{$config:HOST}:8282/oxygen-xml-web-author/app/oxygen.html{if (empty($OXY-URL)) then '' else concat('?url=', $OXY-URL)}"
+        <iframe src="http://{$config:HOST}:8282/oxygen-xml-web-author/app/oxygen.html{
+            if (empty($OXY-URL) and empty($AUTHOR)) then '' else (
+                '?' || ( if (empty($OXY-URL)) then ('author=' || $AUTHOR) else (('url=' || $OXY-URL) || (if (empty($AUTHOR)) then '' else ('&amp;' || 'author=' || $AUTHOR) ) ) )
+            )
+        }"
             width="85%" onload="this.height=window.innerHeight;" align="right" id="oxygenFrame" name="oxygen" title="oXygen Web Author"></iframe>
         <div>
             <div>
