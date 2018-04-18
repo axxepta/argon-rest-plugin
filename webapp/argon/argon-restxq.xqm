@@ -1,7 +1,14 @@
+(:~
+ REST API endpoints as needed by oXygen WebAuthor integration
+
+ @see https://github.com/oxygenxml/web-author-rest-plugin/blob/master/docs/API-spec.md
+:)
 module namespace _= "argon/argon";
 
 import module namespace Session = 'http://basex.org/modules/session';
 import module namespace config = "argon/config" at "config.xqm";
+
+
 
 declare function _:path-strip($path as xs:string) as xs:string {
     if (contains($path, 'Databases'))
