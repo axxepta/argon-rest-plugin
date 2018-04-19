@@ -1,19 +1,24 @@
 # Argon oXygen XML Web Author Plugin
 BaseX database connector for oXygen XML Web Author
 
+## Goals
+
+* Provide a ready-to-use web application that
+  * hosts the oxygen webauthor
+  * implements the webauthor integration REST API
+  
+  ## TODO
+ * separate argon-restxq.xqm into an oXygen specific layer and a more general rest layer
+ * provide sample basex instance with the project
+ * align Java classes (de-duplicate code) with [desktop plugin](https://github.com/axxepta/project-argon), e.g. LockHandler, StreamHandler etc.
+ * setup build server and tests
+
+
 ## Components
 This plugin has to be deployed in two parts
 
 - src/main/java/de.axxepta.argon.webapp:  An oXygen plugin component with REST connector (Java output artifact of the **Gradle makePlugin** task)
 - webapp: A BaseX RestXQ webapp component (folder **webapp**, to be deployed along with a BaseX instance)
-
-### TODO
- * separate argon-restxq.xqm into an oXygen specific layer and a general rest layer
- * provide sample basex instance
- * align Java classes with [desktop plugin](https://github.com/axxepta/project-argon)
- * setup build server and tests
-
-
 
 ### oXygen XML Web Author plugin
 The oXygen plugin is based mainly on the 
