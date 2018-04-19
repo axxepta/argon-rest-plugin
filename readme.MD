@@ -2,13 +2,12 @@
 BaseX database connector for oXygen XML Web Author
 
 
+## Create the plugin
+* Gradle task **makePlugin**
+* Copy the jar from builds/distributions to the web author admin page
 
-## Components
 
-- src/main/java/de.axxepta.argon.webapp:  An oXygen plugin component with REST connector (Java output artifact of the **Gradle makePlugin** task)
-
-
-### oXygen XML Web Author plugin
+## oXygen XML Web Author plugin notes
 The oXygen plugin is based mainly on the 
 [oXygen XML Web Author REST plugin](https://github.com/oxygenxml/web-author-rest-plugin).
 
