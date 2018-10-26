@@ -1,5 +1,5 @@
 group 'de.axxepta'
-version '0.1.1'
+version '0.1.2'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -24,7 +24,6 @@ dependencies {
     compile 'com.oxygenxml:oxygen-webapp:19.1.0.0'
     compile 'javax.servlet:javax.servlet-api:3.0.1'
 
-    releaseJars 'javax.servlet:javax.servlet-api:3.0.1'
 }
 
 task copyToLib( type: Copy ) {

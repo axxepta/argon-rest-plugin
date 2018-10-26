@@ -23,6 +23,8 @@ public interface TranslationTags {
    */
   String ROOT_REGEXP_DESCRIPTION = "Root_regexp_description";
 
+  String INVISIBLE_LOGIN_LABEL = "use_invisible_login";
+
   /**
    * Informs the user that the login was successful.
    * 
